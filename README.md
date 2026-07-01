@@ -96,26 +96,26 @@ npx playwright show-trace test-results/<describe-name>-<test-name>-chromium/trac
 - **`list`** - використовую під час локальної розробки для швидкого й лаконічного відображення результатів прогону прямо в терміналі.
 - **`html`** - ідеально підходить для детального розбору помилок та обміну результатами в команді завдяки інтерактивному звіту із вбудованими трейсами.
 - **`junit`** - генерує XML-файл для інтеграції з CI/CD системами (GitHub Actions/Jenkins), де автоматично будується статистика успішності тестів.
-- **custom reporter** (summary-reporter.ts) - власний репортер, що виводить компактний підсумок прогону (passed/skipped/failed) та список назв усіх впалих тестів прямо в консоль, без потреби гортати повні логи.
+- **`custom reporter`** (summary-reporter.ts) - власний репортер, що виводить компактний підсумок прогону (passed/skipped/failed) та список назв усіх впалих тестів прямо в консоль, без потреби гортати повні логи.
 
 **Аналіз впалого тесту:**
-\*\* "Header › 3. should display correct logo"
+#### Header › 3. should display correct logo
 
 - **Що впало:**
-  Assertion `expect().toBeVisible()` завершився помилкою element(s) not found (таймаут 5000 ms) для локатора `getByAltText(/greencity-logo/i).first()`.
+  - Assertion `expect().toBeVisible()` завершився помилкою element(s) not found (таймаут 5000 ms) для локатора `getByAltText(/greencity-logo/i).first()`.
 - **Як впало:**
-  Сторінка завантажилася повністю, і логотип візуально присутній на екрані (підтверджено Trace Viewer). Проте Playwright протягом 5 секунд безуспішно намагався знайти елемент за вказаним alt-текстом.
+  - Сторінка завантажилася повністю, і логотип візуально присутній на екрані (підтверджено Trace Viewer). Проте Playwright протягом 5 секунд безуспішно намагався знайти елемент за вказаним alt-текстом.
 - **Чому (root cause):**
   - Помилка в локаторі (typo)
   - Регулярний вираз `/greencity-logo/i` шукав суцільний текст, тоді як реальний атрибут елемента на сторінці - `alt="Image green city logo"`.
   - `.first()` був доданий для обробки ситуації, коли локатор міг повертати кілька елементів.
   - Після виправлення тексту локатор став унікальним, тому `.first()` видалено.
 
-\*\* Додаткові спостереження:
+**Додаткові спостереження:**
 
 - Поточна реалізація:
 
-```
+```html
 <a _ngcontent-ng-c3629200733="" role="none" routerlinkactive="active-link" tabindex="0" class="header_logo active-link" href="#/greenCity">
 <img _ngcontent-ng-c3629200733="" role="link" alt="Image green city logo" src="assets/img/logo.svg">
 </a>
@@ -123,9 +123,9 @@ npx playwright show-trace test-results/<describe-name>-<test-name>-chromium/trac
 
 - Пропозиція:
 
-* У поточній реалізації <img> має role="link", хоча інтерактивним елементом є <a>.
-* Доцільніше залишити семантику за замовчуванням: <a> як посилання, <img> як зображення, при цьому прибравши role="none" з <a>.
-* Це покращить accessibility та коректну роботу скрінрідерів.
+  - У поточній реалізації <img> має role="link", хоча інтерактивним елементом є <a>.
+  - Доцільніше залишити семантику за замовчуванням: <a> як посилання, <img> як зображення, при цьому прибравши role="none" з <a>.
+  - Це покращить accessibility та коректну роботу скрінрідерів.
 
 ---
 
@@ -166,32 +166,30 @@ Limit the answer to the three parts above and nothing else.
 
 **Відповідь агента**
 
-- Відповідь агента щодо тесту "Header › 3. should display correct logo"
+На прикладі тесту - **Header › 3. should display correct logo**
 
 1. **WHAT** failed:
 
-- `expect(page.getByAltText(/greencity-logo/i).first()).toBeVisible()` - element not found
+  - `expect(page.getByAltText(/greencity-logo/i).first()).toBeVisible()` - element not found
 
 2. **HOW** it failed:
 
-- Page has a link `"Image green city logo"` in the banner; no element with alt text matching `/greencity-logo/i`.
+  - Page has a link `"Image green city logo"` in the banner; no element with alt text matching `/greencity-logo/i`.
 
 3. **WHY** it failed:
 
-- Wrong or mistyped selector: `/greencity-logo/i` vs alt `"Image green city logo"`;
+  - Wrong or mistyped selector: `/greencity-logo/i` vs alt `"Image green city logo"`;
 
 **Порівняння з власним аналізом (3–5 речень):**
-
-Аналіз агента збігається з моїм у частині root cause.
-Агент діяв строго в межах заданого промпту, тому обмежився лише безпосередньою причиною без додаткового контексту.
-Мій аналіз ширший, оскільки включає розгляд .first() та додаткові спостереження щодо accessibility HTML.
-Таким чином, агент дав більш вузький, але формально коректний аналіз, тоді як мій - більш детальний.
+  - Аналіз агента збігається з моїм у частині root cause.
+  - Агент діяв строго в межах заданого промпту, тому обмежився лише безпосередньою причиною без додаткового контексту.
+  - Мій аналіз ширший, оскільки включає розгляд .first() та додаткові спостереження щодо accessibility HTML.
+  - Таким чином, агент дав більш вузький, але формально коректний аналіз, тоді як мій - більш детальний.
 
 **Оцінка дотримання обмежень:**
-
-Агент дотримався усіх встановлених обмежень промпту.
-Він надав відповідь строго за структурою (WHAT, HOW, WHY).
-Не запропонував жодного рядка виправленого коду, не намагався рефакторити файли чи запускати тести знову.
+  - Агент дотримався усіх встановлених обмежень промпту.
+  - Він надав відповідь строго за структурою (WHAT, HOW, WHY).
+  - Не запропонував жодного рядка виправленого коду, не намагався рефакторити файли чи запускати тести знову.
 
 ---
 
@@ -207,7 +205,7 @@ Limit the answer to the three parts above and nothing else.
 
 ### Мої відповіді — Завдання 3
 
-\*\* "Header › 3.should display correct logo"
+#### Header › 3. should display correct logo
 
 - **Опис змін:** Виправлено регулярний вираз у `getByAltText` відповідно до реального `alt` атрибута елемента та видалено надлишковий метод `.first()`.
 
@@ -215,7 +213,7 @@ Limit the answer to the three parts above and nothing else.
 
 ---
 
-\*\* "Header › 7. should display login button"
+#### Header › 7. should display login button
 
 - **Опис змін:** Змінено роль у локаторі з прихованого посилання (link) на видиму картинку-іконку (img), яка фактично відображається на сторінці.
 
@@ -223,7 +221,7 @@ Limit the answer to the three parts above and nothing else.
 
 ---
 
-\*\* "Header › 10. should home page has search input"
+#### Header › 10. should home page has search input
 
 - **Опис змін:** Додано крок `click()` на іконку пошуку перед перевіркою placeholder, щоб відкрити динамічне поле пошуку.
 
@@ -231,7 +229,7 @@ Limit the answer to the three parts above and nothing else.
 
 ---
 
-\*\* "Main Content Section › 1. should display home page text"
+#### Main Content Section › 1. should display home page text
 
 - **Опис змін:** Оновлено текст заголовка у локаторі відповідно до актуального тексту на сторінці.
 
@@ -239,7 +237,7 @@ Limit the answer to the three parts above and nothing else.
 
 ---
 
-\*\* "Main Content Section › 4. Newsletter subscription form accepts email input and Subscribe button is clickable"
+#### Main Content Section › 4. Newsletter subscription form accepts email input and Subscribe button is clickable
 
 - **Опис змін:** Синхронізовано значення рядків: у полі `toHaveValue` вказано той самий імейл, який фактично вводиться на крок раніше через `.fill()`.
 
@@ -247,24 +245,22 @@ Limit the answer to the three parts above and nothing else.
 
 ---
 
-\*\* "Footer Section › 1. Footer navigation links are visible"
+#### Footer Section › 1. Footer navigation links are visible
 
 - **Опис змін:**
-
-1. Переписано базовий локатор футера на семантичний - `getByRole('contentinfo')`.
-2. Використано регулярні вирази замість строгих рядків для захисту від зайвих пробілів у тексті посилань.
-3. До очікуваного масиву додано пропущений пункт `"Places"`.
-
+  - Переписано базовий локатор футера на семантичний - `getByRole('contentinfo')`.
+  - Використано регулярні вирази замість строгих рядків для захисту від зайвих пробілів у тексті посилань.
+  - До очікуваного масиву додано пропущений пункт `"Places"`.
+  
 - **Чи збіглось з початковою гіпотезою:** Так, первинна гіпотеза підтвердилася. Причиною падіння була зміна структури меню, яка не була врахована в тесті.
 
 ---
 
-\*\* "Footer Section › 2. Footer "Follow us" social links are visible"
+#### Footer Section › 2. Footer "Follow us" social links are visible
 
 - **Опис змін:**
-
-1. Переписано базовий локатор футера на семантичний — `getByRole("contentinfo")`.
-2. Виправлено одруківку в регулярному виразі локатора з `/leenkedin/i` на `/linkedin/i`.
+  - Переписано базовий локатор футера на семантичний — `getByRole("contentinfo")`.
+  - Виправлено одруківку в регулярному виразі локатора з `/leenkedin/i` на `/linkedin/i`.
 
 - **Чи збіглось з початковою гіпотезою:** Так, первинна гіпотеза повністю підтвердилася. Причиною падіння була помилка в назві локатора.
 
